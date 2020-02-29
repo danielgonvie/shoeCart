@@ -2,8 +2,18 @@
 <html lang="en-GB">
 <head>
   <meta charset="utf-8">
+  <link href="https://fonts.googleapis.com/css?family=Roboto|Roboto+Slab&display=swap" rel="stylesheet">
   <title>🛒 Lil-Amazon</title>
   <style>
+    html, body{
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      --my-main-color: #3d5afe;
+      font-family: "Roboto Slab";
+      min-height: 100vh;
+      
+    }
     body {
       background: #fafafa;
     }
@@ -12,5 +22,6 @@
 <body>
   <my-little-amazon></my-little-amazon>
    <script type="module" src="../src/my-little-amazon.js"></script>
+   <script src="../node_modules/macro-carousel/dist/macro-carousel.min.js" defer></script>
 </body>
 </html>
