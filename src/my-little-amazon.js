@@ -6,6 +6,7 @@ import "@polymer/polymer/lib/elements/dom-repeat";
 import "@polymer/polymer/lib/elements/array-selector";
 import "@polymer/polymer/lib/elements/dom-if";
 import "./my-shoe"
+import "./my-bag"
 
 /*
 Description for my-beer-card
@@ -254,10 +255,17 @@ export default class MyLittleAmazon extends PolymerElement {
     </style>
     <div class="my-little-amazon-topbar">
       <h1   class="my-little-amazon-title">Lil'Amazon</h1>
-      <img class="my-little-amazon-cart" src="../img/supermarket.png"></img>
+      <img class="my-little-amazon-cart" src="../img/supermarket.png" on-click="_closeBag"></img>
+
+      
+
     </div>
     <div class="my-little-amazon-content">
-    <my-shoe></my-shoe>
+
+
+    
+    <my-shoe selectedShoe=[[selectedShoe]] class="hidden"></my-shoe>
+
     <div class="my-little-amazon-querys">
     <input type="text" class="my-little-amazon-searchbar"  value={{query::input}} />
     <div class="my-little-amazon-filter-by-tag">
@@ -290,11 +298,7 @@ export default class MyLittleAmazon extends PolymerElement {
           </template>
 
 
-          <macro-carousel navigation loop class="my-little-amazon-shoe-img">
-             <div class="my-little-amazon-shoe-carousel-div"> <img class="my-little-amazon-shoe-image" src=[[item.pictures.0]]></img></div>
-             <div class="my-little-amazon-shoe-carousel-div"> <img class="my-little-amazon-shoe-image" src=[[item.pictures.1]]></img></div>
-             <div class="my-little-amazon-shoe-carousel-div"> <img class="my-little-amazon-shoe-image" src=[[item.pictures.2]]></img></div>
-          </macro-carousel>
+          <img class="my-little-amazon-shoe-img" src=[[item.pictures.0]]></img>
           <div class="my-little-amazon-shoe-data">
           <div class="my-little-amazon-shoe-info">
           <h3 class="my-little-amazon-shoe-maker">[[item.maker]]</h3>
@@ -304,7 +308,10 @@ export default class MyLittleAmazon extends PolymerElement {
           </div>
           </div>
         </template>
-        <array-selector stock="{{stock}}" chosen-beer="{{selectedShoe}}"></array-selector>
+
+        <my-bag class="hidden" bagContent={{bagContent}}></my-bag>
+
+        <array-selector stock="{{stock}}" selectedShoe="{{selectedShoe}}" bagContent="{{bagContent}}"></array-selector>
     </div>
     </div>
 
@@ -422,12 +429,26 @@ export default class MyLittleAmazon extends PolymerElement {
         type: Object,
         value: () => ({})
       },
+      bagContent: {
+        type: Array,
+        value: () => []
+      },
       query: {
         type: String,
         value: ""
       },
-
+      closedBag: {
+        type: Boolean,
+        value: true
+      }
     };
+  }
+
+  constructor(){
+    super();
+    this.addEventListener(`closeSelected`, this._closeCard.bind(this))
+    this.addEventListener(`closeBag`, this._closeBag.bind(this))
+    this.addEventListener(`addItems`, this._addItemsToCart.bind(this))
   }
 
   _filteredItems(query) {
@@ -442,7 +463,9 @@ export default class MyLittleAmazon extends PolymerElement {
     const shoePicked = e.model.item;
     let shoeId = shoePicked.id
     this.set("selectedShoe", shoePicked);
-    this.linkPaths("selectedShoe", `stock.${shoeId}`)
+    this.linkPaths("selectedShoe", `stock.${shoeId}`);
+    let x = this.shadowRoot.querySelector("my-shoe")
+    x.classList.remove("hidden")
     
   }
 
@@ -492,6 +515,31 @@ export default class MyLittleAmazon extends PolymerElement {
     }
   }
 
+  _closeCard(){
+    let x = this.shadowRoot.querySelector("my-shoe")
+    x.classList.add("hidden")
+
+    this.set("selectedShoe", {})
+  }
+
+  
+
+  _closeBag(){
+    if(this.closedBag === false){
+      this.closedBag = true;
+      let x = this.shadowRoot.querySelector("my-bag")
+      x.classList.add("hidden")
+   }
+   else{
+    this.closedBag = false;
+    let x = this.shadowRoot.querySelector("my-bag")
+    x.classList.remove("hidden")
+   }
+
+  }
+  _addItemsToCart(e){
+    console.log(e.detail)
+  }
   // shoe: {
   // name, description, maker, availableSizes:[], price, pictures:[], new: boolean, featured: boolean, upcoming: boolean, inStore:5
   // }
